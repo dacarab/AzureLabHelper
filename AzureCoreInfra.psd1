@@ -1,0 +1,4 @@
+Function Create-AzureCoreInfra{
+    
+
+}
