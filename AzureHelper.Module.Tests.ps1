@@ -37,11 +37,11 @@ Describe "$Module Module Tests" {
             It "Function-$Function.ps1 should contain an EXAMPLE" {
                 "$Here\Function-$Function.ps1" | Should Contain ".EXAMPLE"
             }
-            It "$Function should be an Advanced Function" {
+            It "Function-$Function.ps1 should define an Advanced Function" {
                 "$Here\Function-$Function.ps1" | Should Contain 'CmdletBinding'
 
             }
-            It "$Function should have tests" {
+            It "Function-$Function.ps1  should have tests" {
                 "$Here\Function-$Function.Tests.ps1" | Should Exist
             }
         } # Context "Test Function $Function"
