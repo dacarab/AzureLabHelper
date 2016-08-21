@@ -17,6 +17,7 @@
 
 Function New-LabRG {
     [CmdletBinding()]
+    [OutputType("System.Object.PSResourceGroup")]
     Param(
         [Parameter(Mandatory)]
         [String]$ResourceGroupPrefix,
@@ -26,5 +27,7 @@ Function New-LabRG {
     # Create a "random" name to use for the lab
     $LabLabel = -join ($ResourceGroupPrefix, $(Get-Random -Maximum 9999))
 
-    New-AzureRmResourceGroup -Location $Location -Name $LabLabel 
+    $Output = New-AzureRmResourceGroup -Location $Location -Name $LabLabel
+
+    Return $Output
 }
