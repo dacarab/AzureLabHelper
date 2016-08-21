@@ -28,7 +28,27 @@ Function New-AzureLab {
     $StorageAccount = New-LabStorageAccount -ResourceGroup $ResourceGroup
 
     # Create a vSubnet to use for the LabName
-    $vSubnet = New-Lab
+    $vSubnet = New-LabvSubnet -ResourceGroup $ResourceGroup
+
+    # Create lab machines
+    If ($WindowsCount) {
+        $param = @{
+            Count = $WindowsCount
+            ResourceGroup = $ResourceGroup
+            StorageAccount = $StorageAccount
+            vSubnet = $vSubnet
+        }
+        New-LabWindowsBox @param
+    }
+    If ($LinuxCount) {
+        $param = @{
+            Count = $LinuxCount
+            ResourceGroup = $ResourceGroup
+            StorageAccount = $StorageAccount
+            vSubnet = $vSubnet
+        }
+        New-LabLinuxBox @param
+    }
     
 
 }
