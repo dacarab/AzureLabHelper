@@ -11,8 +11,17 @@
 Function New-LabStorageAccount{
     [CmdletBinding()]
     Param(
-        $ResourceGroup,
-        $StorageAccount,
-        $vSubnet
+        $ResourceGroup
     )
+
+    $Params = @{
+        Name = $ResourceGroup.ResourceGroupName
+        ResourceGroupName = $ResourceGroupName.ResourceGroupName
+        SkuName = "Standard_LRS"
+        Location ="NorthEurope"
+    }
+
+    $Output = New-AzureRmStorageAccount @Params
+
+    Return $Output
 }
