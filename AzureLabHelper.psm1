@@ -8,3 +8,12 @@ ForEach($Script in $FunctionScripts) {
 } 
 
 Export-ModuleMember New-AzureLab
+
+#<#
+# For debugging
+$Functions = Get-ChildItem $PSScriptRoot\Functions -file -Filter *.ps1 |
+  Select-Object -ExpandProperty BaseName
+ForEach($Function in $Functions){
+    Export-ModuleMember $Function
+}
+#>

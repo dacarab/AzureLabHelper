@@ -41,7 +41,13 @@ Describe "$Module Module Tests" -Tags "Unit", "Acceptance"{
             It "$Function.ps1 should define an Advanced Function" {
                 "$ModulePath\Functions\$Function.ps1" | Should Contain '[CmdletBinding()]'
             }
-            It "$Function.ps1  should have tests" {
+            It "$Function.ps1 should contain valid PowerShell code" {
+                $PsFile = Get-Content $ModulePath\Functions\$Function.ps1
+                $Errors = $Null
+                [System.Management.Automation.PSParser]::Tokenize($PsFile,[ref]$Errors) | Out-Null
+                $errors.Count | Should be 0
+            }
+            It "$Function.ps1 should have tests" {
                 "$ModulePath\Tests\$Function.Tests.ps1" | Should Exist
             }
         } # Context "Test Function $Function"

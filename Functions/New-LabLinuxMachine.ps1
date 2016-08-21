@@ -10,6 +10,8 @@
     StorageAccount to be used for the creation of the box
     .Parameter vSubnet
     vSubnet the box is to be deployed to
+    .Parameter Count
+    Number of machines to spin up
     .Example
 #>
 Function New-LabLinuxMachine{
@@ -17,6 +19,7 @@ Function New-LabLinuxMachine{
     Param(
         $ResourceGroup,
         $StorageAccount,
-        $vSubnet
+        $vSubnet,
+        $Count
     )
 }

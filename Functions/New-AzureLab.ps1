@@ -27,5 +27,8 @@ Function New-AzureLab {
     # Create a storage Account for the lab
     $StorageAccount = New-LabStorageAccount -ResourceGroup $ResourceGroup
 
+    # Create a vSubnet to use for the LabName
+    $vSubnet = New-Lab
+    
 
 }
