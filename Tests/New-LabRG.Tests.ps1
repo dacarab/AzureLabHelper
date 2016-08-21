@@ -1,6 +1,8 @@
 $Module = "AzureLabHelper"
 $Function = "New-LabRG"
-$Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+Get-Module $Module | Remove-Module -Force
+Import-Module $PSScriptRoot\..\$Module.psm1 -Force
 
 Describe "$Function Unit Tests" -Tags "Unit"{
     InModuleScope AzureLabHelper{
@@ -31,7 +33,7 @@ Describe "$Function Unit Tests" -Tags "Unit"{
                 Return $Output
             } # Mock New-AzureRmResourceGroup
 
-            $ResourceGroup = New-LabRG -ResourceGroupPrefix "AcceptenceTest"
+            $ResourceGroup = New-LabRG -LabName "AcceptenceTest"
 
             It "$Function returns a PSResourceGroup object " {
                 $ResourceGroup.ToString() |

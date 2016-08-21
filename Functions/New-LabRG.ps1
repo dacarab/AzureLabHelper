@@ -20,12 +20,12 @@ Function New-LabRG {
     [OutputType("System.Object.PSResourceGroup")]
     Param(
         [Parameter(Mandatory)]
-        [String]$ResourceGroupPrefix,
+        [String]$LabName,
         [String]$Location = "NorthEurope"
     )
 
     # Create a "random" name to use for the lab
-    $LabLabel = -join ($ResourceGroupPrefix, $(Get-Random -Maximum 9999))
+    $LabLabel = -join ($LabName, $(Get-Random -Maximum 9999))
 
     $Output = New-AzureRmResourceGroup -Location $Location -Name $LabLabel
 

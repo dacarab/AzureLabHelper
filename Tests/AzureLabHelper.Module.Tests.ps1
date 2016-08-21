@@ -1,8 +1,7 @@
 $Module = 'AzureLabHelper'
-$Here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ModulePath = Split-Path -Parent $Here
+$ModulePath = Split-Path -Parent $PSScriptRoot
 
-Describe "$Module Module Tests" {
+Describe "$Module Module Tests" -Tags "Unit", "Acceptance"{
         Context "Module Setup" {
         It "has root module file $Module.psm1"{
             "$ModulePath\$Module.psm1" | Should Exist 
@@ -22,26 +21,27 @@ Describe "$Module Module Tests" {
         }
     } # Context "Module Setup"
 
-    $Functions = @("New-LabRG")
+    $Functions = Get-ChildItem -Path "$ModulePath\Functions" |
+      Select-Object -ExpandProperty BaseName
 
     foreach ($Function in $Functions) {
         Context "Test Function $Function" {
-            It "Function-$Function.ps1 should exist" {
+            It "$Function.ps1 should exist" {
                 "$ModulePath\Functions\$Function.ps1" | Should Exist
             }
-            It "Function-$Function.ps1 should contain a SYNOPSIS" {
+            It "$Function.ps1 should contain a SYNOPSIS" {
                 "$ModulePath\Functions\$Function.ps1" | Should Contain ".SYNOPSIS"
             }
-            It "Function-$Function.ps1 should contain a DESCRIPTION" {
+            It "$Function.ps1 should contain a DESCRIPTION" {
                 "$ModulePath\Functions\$Function.ps1" | Should Contain ".DESCRIPTION"
             }
-            It "Function-$Function.ps1 should contain an EXAMPLE" {
+            It "$Function.ps1 should contain an EXAMPLE" {
                 "$ModulePath\Functions\$Function.ps1" | Should Contain ".EXAMPLE"
             }
-            It "Function-$Function.ps1 should define an Advanced Function" {
+            It "$Function.ps1 should define an Advanced Function" {
                 "$ModulePath\Functions\$Function.ps1" | Should Contain '[CmdletBinding()]'
             }
-            It "Function-$Function.ps1  should have tests" {
+            It "$Function.ps1  should have tests" {
                 "$ModulePath\Tests\$Function.Tests.ps1" | Should Exist
             }
         } # Context "Test Function $Function"
