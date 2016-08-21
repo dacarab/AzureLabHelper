@@ -1,3 +1,3 @@
+. $PSScriptRoot\Functions\Function-New-LabRG.ps1
 
-
-New-LabRG -ResourceGroupPrefix "Wibbler" 
+Export-ModuleMember New-LabRG

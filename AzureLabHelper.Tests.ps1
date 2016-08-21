@@ -1,2 +1,2 @@
 Import-Module Pester
-Invoke-Pester ".\AzureLabHelperModule.Test.ps1" 
+Invoke-Pester ".\Tests\AzureLabHelper.Module.Tests.ps1" 
