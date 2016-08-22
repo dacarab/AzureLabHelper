@@ -11,16 +11,25 @@
 Function New-LabvSubnet{
     [CmdletBinding()]
     Param(
-        $vNetwork,
+        $Vnetwork,
         $ResourceGroup
     )
 
-    # Find a spare range in the passed network in the 10.0.255.0 range
-    $LastUsedSubnet = $vNetwork.Subnets | Where-Object AddressPrefix -like "10.255.*" |
+    # Find a spare subnet in the passed network
+    $lastUsedSubnetCidr = $vNetwork.Subnets | Where-Object AddressPrefix -like "10.255.*" |
       Select-Object -ExcludeProperty AddressPrefix |Sort-Object |Select-Object -Last 1
+    $lastUsedSubnetBytes =([IpAddress]::New($lastUsedSubnetCidr.Split("/")[0])).GetAddressBytes()
+    $lastUsedSubnetBytes[2]++
+    $newSubnet = [IpAddress]::New($lastUsedSubnetBytes)
+    $newSubnetCidr = "$($newSubnet.ToString())/24"
     
     # Modify the config of the vNet to include new subnet
-    $subnet = New-AzureRmVirtualNetworkSubnetConfig -name frontendSubnet -AddressPrefix 10.0.1.0/24
-    $vnet = New-AzureRmVirtualNetwork -Name $vnetName -ResourceGroupName $resourceGroup -Location $location `
-      -AddressPrefix 10.0.0.0/16 -Subnet $subnet
+    $param = @{
+        Name = $ResourceGroup.ResourceGroupName
+        AddressPrefix = $newSubnetCidr
+        VirtualNetwork = $Vnetwork
+    }
+    $output = Add-AzureRmVirtualNetworkSubnetConfig @param | Set-AzureRmVirtualNetwork
+    
+    Return $output
 }

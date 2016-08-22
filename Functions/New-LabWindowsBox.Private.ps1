@@ -14,7 +14,7 @@
     Number of machines to spin up    
     .Example
 #>
-Function New-LabLinuxMachine{
+Function New-LabWindowsBox{
     [CmdletBinding()]
     Param(
         $ResourceGroup,
