@@ -16,7 +16,7 @@ Function New-LabStorageAccount{
 
     $Params = @{
         Name = $ResourceGroup.ResourceGroupName
-        ResourceGroupName = $ResourceGroupName.ResourceGroupName
+        ResourceGroupName = $ResourceGroup.ResourceGroupName
         SkuName = "Standard_LRS"
         Location ="NorthEurope"
     }

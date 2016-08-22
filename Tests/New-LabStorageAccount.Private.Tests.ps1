@@ -5,9 +5,10 @@ Get-Module $Module | Remove-Module -Force
 Import-Module $PSScriptRoot\..\$Module.psm1 -Force
 
 Describe "$Function unit tests" -Tags "Unit" {
+  InModuleScope AzureLabHelper{
     Context "$Function returns the expected object" {
         Mock New-AzureRmStorageAccount {
-            $MockData = '@
+            $mockData = @'
 <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
   <Obj RefId="0">
     <TN RefId="0">
@@ -112,15 +113,36 @@ Describe "$Function unit tests" -Tags "Unit" {
     </Props>
   </Obj>
 </Objs>
-@'
-            $Output = [System.Management.Automation.PSSerializer]::Deserialize($MockData)
+'@
+            $Output = [System.Management.Automation.PSSerializer]::Deserialize($mockData)
 
             Return $Output
         } # Mock New-AzureRmStorageAccount
 
-        $StorageAccount = New-AzureRmStorageAccount
+        $mockResourceGroup = @'
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.Azure.Commands.ResourceManager.Cmdlets.SdkModels.PSResourceGroup</T>
+      <T>System.Object</T>
+    </TN>
+    <ToString>Microsoft.Azure.Commands.ResourceManager.Cmdlets.SdkModels.PSResourceGroup</ToString>
+    <Props>
+      <S N="ResourceGroupName">PesterTest0001</S>
+      <S N="Location">northeurope</S>
+      <S N="ProvisioningState">Succeeded</S>
+      <Nil N="Tags" />
+      <Nil N="TagsTable" />
+      <S N="ResourceId">/subscriptions/f4a4040f-1f28-4c55-ae0c-b14ad0f38a87/resourceGroups/PesterTest0001</S>
+    </Props>
+  </Obj>
+</Objs>   
+'@
+        $mockInput = [System.Management.Automation.PSSerializer]::Deserialize($mockResourceGroup)
+        $storageAccount = New-LabStorageAccount -ResourceGroup $mockInput
         It "$Function returns a PSStorageAccount object" {
-            $
+            $storageAccount.ToString() |
+              Should Be "Microsoft.Azure.Commands.Management.Storage.Models.PSStorageAccount"
         }
     } # Context "$Function returns the expected object"
 } # Describe "$Function unit tests" -Tags "Unit"
@@ -134,4 +156,5 @@ Describe "$Function Acceptence Tests" -Tags "Acceptance" {
             $ResourceGroup.GetType().Name | Should Be "PSResourceGroup"
         }
     } # Context "$Function returns the expected object"
+  }
 }
