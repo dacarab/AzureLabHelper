@@ -19,7 +19,8 @@ Function New-AzureLab {
     Param(
         [String]$LabName,
         [Int]$WindowsCount,
-        [Int]$LinuxCount
+        [Int]$LinuxCount,
+        $Cred
     )
     # Create the resource group required to manage the lab
     $ResourceGroup = New-LabRG -LabName $LabName
@@ -28,7 +29,7 @@ Function New-AzureLab {
     $StorageAccount = New-LabStorageAccount -ResourceGroup $ResourceGroup
 
     # Create a vSubnet to use for the LabName
-    $vSubnet = New-LabvSubnet -ResourceGroup $ResourceGroup
+    $SubnetID = New-LabvSubnet -ResourceGroup $ResourceGroup
 
     # Create lab machines
     If ($WindowsCount) {
@@ -36,7 +37,8 @@ Function New-AzureLab {
             Count = $WindowsCount
             ResourceGroup = $ResourceGroup
             StorageAccount = $StorageAccount
-            vSubnet = $vSubnet
+            vSubnet = $SubnetID
+            cred = $Cred
         }
         New-LabWindowsBox @param
     }
@@ -45,7 +47,8 @@ Function New-AzureLab {
             Count = $LinuxCount
             ResourceGroup = $ResourceGroup
             StorageAccount = $StorageAccount
-            vSubnet = $vSubnet
+            vSubnet = $SubnetID
+            Cred = $Cred
         }
         New-LabLinuxBox @param
     }

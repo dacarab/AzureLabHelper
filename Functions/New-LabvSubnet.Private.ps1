@@ -18,8 +18,8 @@ Function New-LabvSubnet{
     # Find a spare subnet in the passed network
     $lastUsedSubnetCidr = $vNetwork.Subnets | Where-Object AddressPrefix -like "10.255.*" |
       Select-Object -ExcludeProperty AddressPrefix |Sort-Object |Select-Object -Last 1
-    $lastUsedSubnetBytes =([IpAddress]::New($lastUsedSubnetCidr.Split("/")[0])).GetAddressBytes()
-    $lastUsedSubnetBytes[2]++
+    $lastUsedSubnetBytes = ([IpAddress]::New($lastUsedSubnetCidr.Split("/")[0])).GetAddressBytes()
+    $lastUsedSubnetBytes[2] = $lastUsedSubnetBytes[2] + 1
     $newSubnet = [IpAddress]::New($lastUsedSubnetBytes)
     $newSubnetCidr = "$($newSubnet.ToString())/24"
     
