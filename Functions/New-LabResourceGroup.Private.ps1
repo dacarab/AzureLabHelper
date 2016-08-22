@@ -8,14 +8,14 @@
     .Parameter ResourseGroupPrefix
     The prefix that you wish to prepend to the randomly generated 4 didgit number
     .Example
-    $LabResourceGroup = New-LabRG -ResourceGroupPrefix Wibbler
+    $LabResourceGroup = New-LabResourceGroup -ResourceGroupPrefix Wibbler
 
     Will append a randomly generated 4 digit number onto the end of Wibbler,
     create a resource group of that name in Azure  and place the resource group 
     into the variable '$LabResourceGroup'
 #>
 
-Function New-LabRG {
+Function New-LabResourceGroup {
     [CmdletBinding()]
     [OutputType("System.Object.PSResourceGroup")]
     Param(

@@ -23,13 +23,13 @@ Function New-AzureLab {
         $Cred
     )
     # Create the resource group required to manage the lab
-    $ResourceGroup = New-LabRG -LabName $LabName
+    $ResourceGroup = New-LabResourceGroup -LabName $LabName
 
     # Create a storage Account for the lab
     $StorageAccount = New-LabStorageAccount -ResourceGroup $ResourceGroup
 
     # Create a vSubnet to use for the LabName
-    $SubnetID = New-LabvSubnet -ResourceGroup $ResourceGroup
+    $SubnetID = New-LabSubnet -ResourceGroup $ResourceGroup
 
     # Create lab machines
     If ($WindowsCount) {

@@ -8,7 +8,7 @@
     ResourceGroup to use for the creation of the vSubnet
     .Example
 #>
-Function New-LabvSubnet{
+Function New-LabSubnet{
     [CmdletBinding()]
     Param(
         $Vnetwork,

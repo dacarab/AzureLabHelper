@@ -1,5 +1,5 @@
 $Module = "AzureLabHelper"
-$Function = "New-LabRG"
+$Function = "New-LabResourceGroup"
 
 Get-Module $Module | Remove-Module -Force
 Import-Module $PSScriptRoot\..\$Module.psm1 -Force
@@ -33,7 +33,7 @@ Describe "$Function Unit Tests" -Tags "Unit"{
                 Return $Output
             } # Mock New-AzureRmResourceGroup
 
-            $ResourceGroup = New-LabRG -LabName "AcceptenceTest"
+            $ResourceGroup = New-LabResourceGroup -LabName "AcceptenceTest"
 
             It "$Function returns a PSResourceGroup object " {
                 $ResourceGroup.ToString() |
@@ -44,9 +44,9 @@ Describe "$Function Unit Tests" -Tags "Unit"{
 } # Describe "$Function Tests" -Tags "Unit"
 
 Describe "$Function Acceptence Tests" -Tags "Acceptance" {
-    $ResourceGroup = New-LabRG -ResourceGroupPrefix "PesterTest"
+    $ResourceGroup = New-LabResourceGroup -ResourceGroupPrefix "PesterTest"
     Context "$Function returns the expected object" {
-        $ResourceGroup = New-LabRG -ResourceGroupPrefix "PesterTest"
+        $ResourceGroup = New-LabResourceGroup -ResourceGroupPrefix "PesterTest"
 
         It "$Function returns a PSResourceGroup object" {
             $ResourceGroup.GetType().Name | Should Be "PSResourceGroup"

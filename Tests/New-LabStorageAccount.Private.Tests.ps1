@@ -1,12 +1,12 @@
-$Module = "AzureLabHelper"
-$Function = "New-LabStorageAccount"
+$module = "AzureLabHelper"
+$function = "New-LabStorageAccount"
 
-Get-Module $Module | Remove-Module -Force
-Import-Module $PSScriptRoot\..\$Module.psm1 -Force
+Get-Module $module | Remove-Module -Force
+Import-Module $PSScriptRoot\..\$module.psm1 -Force
 
-Describe "$Function unit tests" -Tags "Unit" {
-  InModuleScope AzureLabHelper{
-    Context "$Function returns the expected object" {
+Describe "$function unit tests" -Tags "Unit" {
+  InModuleScope AzureLabHelper {
+    Context "$function returns the expected object" {
         Mock New-AzureRmStorageAccount {
             $mockData = @'
 <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
@@ -114,9 +114,9 @@ Describe "$Function unit tests" -Tags "Unit" {
   </Obj>
 </Objs>
 '@
-            $Output = [System.Management.Automation.PSSerializer]::Deserialize($mockData)
+            $output = [System.Management.Automation.PSSerializer]::Deserialize($mockData)
 
-            Return $Output
+            Return $output
         } # Mock New-AzureRmStorageAccount
 
         $mockResourceGroup = @'
@@ -140,21 +140,21 @@ Describe "$Function unit tests" -Tags "Unit" {
 '@
         $mockInput = [System.Management.Automation.PSSerializer]::Deserialize($mockResourceGroup)
         $storageAccount = New-LabStorageAccount -ResourceGroup $mockInput
-        It "$Function returns a PSStorageAccount object" {
+        It "$function returns a PSStorageAccount object" {
             $storageAccount.ToString() |
               Should Be "Microsoft.Azure.Commands.Management.Storage.Models.PSStorageAccount"
         }
-    } # Context "$Function returns the expected object"
-} # Describe "$Function unit tests" -Tags "Unit"
+    } # Context "$function returns the expected object"
+} # Describe "$function unit tests" -Tags "Unit"
 
-Describe "$Function Acceptence Tests" -Tags "Acceptance" {
+Describe "$function Acceptence Tests" -Tags "Acceptance" {
     $StorageAccount = New-LabStorageAccount -ResourceGroup "PesterTest"
-    Context "$Function returns the expected object" {
+    Context "$function returns the expected object" {
         $ResourceGroup = New-LabRG -ResourceGroupPrefix "PesterTest"
 
-        It "$Function returns a PSResourceGroup object" {
+        It "$function returns a PSResourceGroup object" {
             $ResourceGroup.GetType().Name | Should Be "PSResourceGroup"
         }
-    } # Context "$Function returns the expected object"
+    } # Context "$function returns the expected object"
   }
 }
