@@ -11,23 +11,27 @@
 Function New-LabSubnet{
     [CmdletBinding()]
     Param(
-        $Vnetwork,
+        $VNetwork,
         $ResourceGroup
     )
 
     # Find a spare subnet in the passed network
-    $lastUsedSubnetCidr = $vNetwork.Subnets | Where-Object AddressPrefix -like "10.255.*" |
-      Select-Object -ExcludeProperty AddressPrefix |Sort-Object |Select-Object -Last 1
-    $lastUsedSubnetBytes = ([IpAddress]::New($lastUsedSubnetCidr.Split("/")[0])).GetAddressBytes()
-    $lastUsedSubnetBytes[2] = $lastUsedSubnetBytes[2] + 1
-    $newSubnet = [IpAddress]::New($lastUsedSubnetBytes)
-    $newSubnetCidr = "$($newSubnet.ToString())/24"
-    
+    If ($VNetwork.Subnets | Where-Object AddressPrefix -like "10.255.*") {
+        $lastUsedSubnetCidr = $VNetwork.Subnets | Where-Object AddressPrefix -like "10.255.*" |
+        Select-Object -ExpandProperty AddressPrefix |Sort-Object |Select-Object -Last 1
+        $lastUsedSubnetBytes = ([IpAddress]::New($lastUsedSubnetCidr.Split("/")[0])).GetAddressBytes()
+        $lastUsedSubnetBytes[2] = $lastUsedSubnetBytes[2] + 1
+        $newSubnet = [IpAddress]::New($lastUsedSubnetBytes)
+        $newSubnetCidr = "$($newSubnet.ToString())/24"
+    }
+    Else {
+        $newSubnetCidr = "10.255.0.0/24"
+    }
     # Modify the config of the vNet to include new subnet
     $param = @{
         Name = $ResourceGroup.ResourceGroupName
         AddressPrefix = $newSubnetCidr
-        VirtualNetwork = $Vnetwork
+        VirtualNetwork = $VNetwork
     }
     $output = Add-AzureRmVirtualNetworkSubnetConfig @param | Set-AzureRmVirtualNetwork
     

@@ -1,56 +1,56 @@
-$Module = 'AzureLabHelper'
-$ModulePath = Split-Path -Parent $PSScriptRoot
+$module = 'AzureLabHelper'
+$modulePath = Split-Path -Parent $PSScriptRoot
 
-Describe "$Module Module Tests" -Tags "Unit", "Acceptance"{
+Describe "$module Module Tests" -Tags "Unit", "Acceptance"{
         Context "Module Setup" {
-        It "has root module file $Module.psm1"{
-            "$ModulePath\$Module.psm1" | Should Exist 
+        It "has root module file $module.psm1"{
+            "$modulePath\$module.psm1" | Should Exist 
         }
-        It "has manifest file $Module.psd1" {
-            "$ModulePath\$Module.psd1" | Should Exist
-            "$ModulePath\$Module.psd1" | Should Contain "$Module.psm1"
+        It "has manifest file $module.psd1" {
+            "$modulePath\$module.psd1" | Should Exist
+            "$modulePath\$module.psd1" | Should Contain "$module.psm1"
         }
-        It "$Module folder has functions" {
-            "$ModulePath\functions\*.ps1" | Should Exist
+        It "$module folder has functions" {
+            "$modulePath\functions\*.ps1" | Should Exist
         }
-        It "$Module should contain valid PowerShell code" {
-            $PsFile = Get-Content $ModulePath\$Module.psm1
+        It "$module should contain valid PowerShell code" {
+            $PsFile = Get-Content $modulePath\$module.psm1
             $Errors = $Null
             [System.Management.Automation.PSParser]::Tokenize($PsFile,[ref]$Errors) | Out-Null
             $errors.Count | Should be 0
         }
     } # Context "Module Setup"
 
-    $Functions = Get-ChildItem -Path "$ModulePath\Functions" |
+    $functions = Get-ChildItem -Path "$modulePath\Functions" |
       Select-Object -ExpandProperty BaseName
 
-    foreach ($Function in $Functions) {
-        Context "Test Function $Function" {
-            It "$Function.ps1 should exist" {
-                "$ModulePath\Functions\$Function.ps1" | Should Exist
+    foreach ($function in $functions) {
+        Context "Test Function $function" {
+            It "$function.ps1 should exist" {
+                "$modulePath\Functions\$function.ps1" | Should Exist
             }
-            It "$Function.ps1 should contain a SYNOPSIS" {
-                "$ModulePath\Functions\$Function.ps1" | Should Contain ".SYNOPSIS"
+            It "$function.ps1 should contain a SYNOPSIS" {
+                "$modulePath\Functions\$function.ps1" | Should Contain ".SYNOPSIS"
             }
-            It "$Function.ps1 should contain a DESCRIPTION" {
-                "$ModulePath\Functions\$Function.ps1" | Should Contain ".DESCRIPTION"
+            It "$function.ps1 should contain a DESCRIPTION" {
+                "$modulePath\Functions\$function.ps1" | Should Contain ".DESCRIPTION"
             }
-            It "$Function.ps1 should contain an EXAMPLE" {
-                "$ModulePath\Functions\$Function.ps1" | Should Contain ".EXAMPLE"
+            It "$function.ps1 should contain an EXAMPLE" {
+                "$modulePath\Functions\$function.ps1" | Should Contain ".EXAMPLE"
             }
-            It "$Function.ps1 should define an Advanced Function" {
-                "$ModulePath\Functions\$Function.ps1" | Should Contain '[CmdletBinding()]'
+            It "$function.ps1 should define an Advanced Function" {
+                "$modulePath\Functions\$function.ps1" | Should Contain '[CmdletBinding()]'
             }
-            It "$Function.ps1 should contain valid PowerShell code" {
-                $PsFile = Get-Content $ModulePath\Functions\$Function.ps1
+            It "$function.ps1 should contain valid PowerShell code" {
+                $PsFile = Get-Content $modulePath\Functions\$function.ps1
                 $Errors = $Null
                 [System.Management.Automation.PSParser]::Tokenize($PsFile,[ref]$Errors) | Out-Null
                 $errors.Count | Should be 0
             }
-            It "$Function.ps1 should have tests" {
-                "$ModulePath\Tests\$Function.Tests.ps1" | Should Exist
+            It "$function.ps1 should have tests" {
+                "$modulePath\Tests\$function.Tests.ps1" | Should Exist
             }
-        } # Context "Test Function $Function"
+        } # Context "Test Function $function"
     } # foreach
-} # Describe "$Module Module Tests"
+} # Describe "$module Module Tests"
 

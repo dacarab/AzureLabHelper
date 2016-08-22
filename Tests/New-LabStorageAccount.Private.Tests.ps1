@@ -136,7 +136,7 @@ Describe "$function unit tests" -Tags "Unit" {
       <S N="ResourceId">/subscriptions/f4a4040f-1f28-4c55-ae0c-b14ad0f38a87/resourceGroups/PesterTest0001</S>
     </Props>
   </Obj>
-</Objs>   
+</Objs>
 '@
         $mockInput = [System.Management.Automation.PSSerializer]::Deserialize($mockResourceGroup)
         $storageAccount = New-LabStorageAccount -ResourceGroup $mockInput
@@ -152,7 +152,7 @@ Describe "$function Acceptence Tests" -Tags "Acceptance" {
     Context "$function returns the expected object" {
         $ResourceGroup = New-LabRG -ResourceGroupPrefix "PesterTest"
 
-        It "$function returns a PSResourceGroup object" {
+        It "$function returns a 'PSResourceGroup' object" {
             $ResourceGroup.GetType().Name | Should Be "PSResourceGroup"
         }
     } # Context "$function returns the expected object"

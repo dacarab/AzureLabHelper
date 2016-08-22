@@ -1,9 +1,9 @@
 # Grab all the script files in the Functions folder
-$FunctionScripts = Get-ChildItem $PSScriptRoot\Functions -file -Filter *.ps1 |
+$functionScripts = Get-ChildItem $PSScriptRoot\Functions -file -Filter *.ps1 |
   Select-Object -ExpandProperty FullName
 
 # dotSource the scriptfiles
-ForEach($Script in $FunctionScripts) {
+ForEach($Script in $functionScripts) {
     . $Script
 } 
 
@@ -11,9 +11,10 @@ Export-ModuleMember New-AzureLab
 
 #<#
 # For debugging
-$Functions = Get-ChildItem $PSScriptRoot\Functions -file -Filter *.ps1 |
+$functions = Get-ChildItem $PSScriptRoot\Functions -file -Filter *.private.ps1 |
   Select-Object -ExpandProperty BaseName
-ForEach($Function in $Functions){
-    Export-ModuleMember $Function
+ForEach($function in $functions){
+    
+    Export-ModuleMember $function.Replace(".Private","")
 }
 #>

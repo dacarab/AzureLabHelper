@@ -13,7 +13,7 @@
     Will append a randomly generated 4 digit number onto the end of Wibbler,
     create a resource group of that name in Azure  and place the resource group 
     into the variable '$LabResourceGroup'
-#>
+#> 
 
 Function New-LabResourceGroup {
     [CmdletBinding()]

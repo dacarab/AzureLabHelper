@@ -1,15 +1,17 @@
-$Module = "AzureLabHelper"
-$Function = "New-LabResourceGroup"
+$module = "AzureLabHelper"
 
-Get-Module $Module | Remove-Module -Force
-Import-Module $PSScriptRoot\..\$Module.psm1 -Force
+Get-Module $module | Remove-Module -Force
+Import-Module $PSScriptRoot\..\$module.psm1 -Force
 
-Describe "$Function Unit Tests" -Tags "Unit"{
+Describe "New-LabResourceGroup Unit Tests" -Tags "Unit"{
     InModuleScope AzureLabHelper{
-        Context "$Function returns the expected object" {
-        
-            Mock New-AzureRmResourceGroup {
-                $MockData = @'
+        $cmdlet = Get-Command New-LabResourceGroup
+
+        Mock New-AzureRmResourceGroup {
+            Param(
+                [String]$Name
+            )
+                $mockData = @'
 <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
   <Obj RefId="0">
     <TN RefId="0">
@@ -18,7 +20,7 @@ Describe "$Function Unit Tests" -Tags "Unit"{
     </TN>
     <ToString>Microsoft.Azure.Commands.ResourceManager.Cmdlets.SdkModels.PSResourceGroup</ToString>
     <Props>
-      <S N="ResourceGroupName">PesterTest0001</S>
+      <S N="ResourceGroupName">PesterTest</S>
       <S N="Location">northeurope</S>
       <S N="ProvisioningState">Succeeded</S>
       <Nil N="Tags" />
@@ -28,28 +30,44 @@ Describe "$Function Unit Tests" -Tags "Unit"{
   </Obj>
 </Objs>   
 '@
+                $mockData = $mockData.Replace("PesterTest",$Name)
                 $Output = [System.Management.Automation.PSSerializer]::Deserialize($MockData)
 
                 Return $Output
             } # Mock New-AzureRmResourceGroup
 
-            $ResourceGroup = New-LabResourceGroup -LabName "AcceptenceTest"
+        Context "New-LabResourceGroup supports the expected parameters" {
+            It "New-LabResourceGroup supports exactly 13 parameters" {
+                $cmdlet.Parameters.count | Should Be 13
+            }
+            It "New-LabResourceGroup supports the 'LabName' parameter" {
+                $cmdlet.Parameters.Keys.Contains("LabName") |
+                  Should Be $true
+            }
+            It "New-LabResourceGroup supports the 'Location' parameter" {
+                $cmdlet.Parameters.Keys.Contains("Location") |
+                  Should Be $true
+            }
+        }
+        Context "New-LabResourceGroup returns the expected output" {
 
-            It "$Function returns a PSResourceGroup object " {
+            $ResourceGroup = New-LabResourceGroup -LabName "IntegrationTest"
+
+            It "New-LabResourceGroup returns a 'PSResourceGroup' object " {
                 $ResourceGroup.ToString() |
                   Should Be "Microsoft.Azure.Commands.ResourceManager.Cmdlets.SdkModels.PSResourceGroup"
             }
-        } # Context "$Function returns the expected object"
+        } # Context "New-LabResourceGroup returns the expected object"
     } # InModuleScope AzureLabHelper
-} # Describe "$Function Tests" -Tags "Unit"
+} # Describe "New-LabResourceGroup Tests" -Tags "Unit"
 
-Describe "$Function Acceptence Tests" -Tags "Acceptance" {
+Describe "New-LabResourceGroup Acceptence Tests" -Tags "Integration" {
     $ResourceGroup = New-LabResourceGroup -ResourceGroupPrefix "PesterTest"
-    Context "$Function returns the expected object" {
+    Context "New-LabResourceGroup returns the expected object" {
         $ResourceGroup = New-LabResourceGroup -ResourceGroupPrefix "PesterTest"
 
-        It "$Function returns a PSResourceGroup object" {
+        It "New-LabResourceGroup returns a PSResourceGroup object" {
             $ResourceGroup.GetType().Name | Should Be "PSResourceGroup"
         }
-    } # Context "$Function returns the expected object"
-}
+    } # Context "New-LabResourceGroup returns the expected object"
+} # Describe "New-LabResourceGroup Acceptence Tests" -Tags "Integration"
