@@ -6,6 +6,17 @@ Import-Module $PSScriptRoot\..\$module.psm1 -Force
 
 Describe "$function unit tests" -Tags "Unit" {
   InModuleScope AzureLabHelper {
+      $cmdlet = Get-Command New-LabStorageAccount 
+      Context "New-LabStorageAccount supports the expected parameters" {
+          It "New-LabStorageAccount supports exactly 12 parameters" {
+              $cmdlet.Parameters.Count | Should Be 12
+          }
+          It "New-LabStorageAccount supports the 'ResourceGroup' parameter" {
+              $cmdlet.Parameters.Keys.Contains("ResourceGroup") |
+                Should Be $true
+          }
+      } # Context "New-LabStorageAccount supports the expected parameters" 
+
     Context "$function returns the expected object" {
         Mock New-AzureRmStorageAccount {
             $mockData = @'
