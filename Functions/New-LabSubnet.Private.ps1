@@ -29,12 +29,17 @@ Function New-LabSubnet{
     }
     Write-Verbose $newSubnetCidr
     # Modify the config of the vNet to include new subnet
+    <#
     $param = @{
         Name = $ResourceGroup.ResourceGroupName
         AddressPrefix = $newSubnetCidr
         VirtualNetwork = $VNetwork
     }
+
     $output = Add-AzureRmVirtualNetworkSubnetConfig @param | Set-AzureRmVirtualNetwork
+    #>
+    $output = Add-AzureRmVirtualNetworkSubnetConfig -Name $ResourceGroup.ResourceGroupName `
+      -AddressPrefix $newSubnetCidr -VirtualNetwork $VNetwork | Set-AzureRmVirtualNetwork
     
     Return $output
 }
