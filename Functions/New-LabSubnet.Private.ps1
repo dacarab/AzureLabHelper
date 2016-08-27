@@ -27,6 +27,7 @@ Function New-LabSubnet{
     Else {
         $newSubnetCidr = "10.255.0.0/24"
     }
+    Write-Verbose $newSubnetCidr
     # Modify the config of the vNet to include new subnet
     $param = @{
         Name = $ResourceGroup.ResourceGroupName

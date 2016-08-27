@@ -19,8 +19,8 @@ Function New-LabWindowsBox{
     Param(
         $ResourceGroup,
         $StorageAccount,
-        $SubnetID,
-        $cred,
+        $VNetwork,
+        $Cred,
         $Count
     )
     # Derive the name prefix to use for generated objects
@@ -38,51 +38,25 @@ Function New-LabWindowsBox{
         $pip = New-AzureRmPublicIpAddress @pipParam
 
         # Create a new interface
-        $vniParam = {
-            Name = $label
-            ResourceGroupName = $prefix
-            Location = 'NorthEurope'
-            SubnetId = $SubnetID
-            PublicIpAddressId = $pip.Id
+        $subnet = $VNetwork.Subnets | Where-Object Name -eq $prefix
 
-        }
-        $vni = New-AzureRmNetworkInterface @vniParam
+        $vni = New-AzureRmNetworkInterface -Name $label -ResourceGroupName $prefix -Location 'NorthEurope' -Subnet $subnet -PublicIpAddress $pip 
 
         # Build OS config 
         $vm = New-AzureRmVMConfig -VMName $vmName$label -VMSize "Standard_A1"
 
-        $osParam = {
-            VM = '$vm'
-            Windows = $true
-            ComputerName = $label
-            Credential = $cred
-            ProvisionVMAgent = $true
-            EnableAutoUpdate = $true
-        }
-        $vm = Set-AzureRmVMOperatingSystem @osParam
+        $vm = Set-AzureRmVMOperatingSystem -VM $vm -Windows -ComputerName $label -Credential $Cred -ProvisionVMAgent -EnableAutoUpdate
 
-        $siParam = {
-            VM = '$vm'
-            PublisherName = 'MicrosoftWindowsServer'
-            Offer = 'WindowsServer'
-            Skus = '2012-R2-Datacenter'
-            version = 'latest'
-
-        }
-        $vm = Set-AzureRmVMSourceImage @siParam
+        $vm = Set-AzureRmVMSourceImage -vm $vm -PublisherName 'MicrosoftWindowsServer' -Offer 'WindowsServer' -Skus '2012-R2-Datacenter' -Version 'latest'
         
         $vm = Add-AzureRmVMNetworkInterface -VM $vm -Id $vni.Id
         
-        $osDiskParam = {
-            VM = $vm
-            Name = $label + "_OS"
-            VhdUri = $StorageAccount.PrimaryEndpoints.Blob.ToString() + "vhds/$label_OS.vhd"
-            CreateOption = "fromImage"
-        }
-        $vm = Set-AzureRmVMOSDisk @osDiskParam
+        $vhdUri = $StorageAccount.PrimaryEndpoints.Blob.ToString() + "vhds/" + $label + "_OS.vhd"
+
+        $vm = Set-AzureRmVMOSDisk -vm $vm -Name $($label + "_OS") -VhdUri $vhdUri -CreateOption FromImage
         
         # Create the vm        
-        New-AzureRmVM -ResourceGroupName $rgName -Location $locName -VM $vm
+        New-AzureRmVM -ResourceGroupName $prefix -Location 'NorthEurope' -VM $vm
 
         $Count = $Count - 1
     } while ($Count -gt 0)

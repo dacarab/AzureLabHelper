@@ -20,11 +20,11 @@ Describe "New-LabSubnet Unit Tests" -Tags "Unit" {
             }
         }
         Context "New-LabSubnet should return the expected output" {
-            Mock Add-AzureRmVirtualNetworkSubnetConfig {
+            Mock Add-AzureRmVirtualNetworkSubnetConfig -ModuleName AzureLabHelper {
                 Return "El Wibbler"
             }
             
-            Mock Set-AzureRmVirtualNetwork {
+            Mock Set-AzureRmVirtualNetwork -ModuleName AzureLabHelper {
                                                                                                                                                                                                                                                                                                                                                                                         $mockData = @'
 <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
   <Obj RefId="0">
@@ -117,6 +117,8 @@ Describe "New-LabSubnet Unit Tests" -Tags "Unit" {
 </Objs>
 '@
                 $output = [System.Management.Automation.PSSerializer]::Deserialize($mockData)
+                $output | Add-Member -TypeName "Microsoft.Azure.Commands.Network.Models.PSVirtualNetwork"
+                
                 Return $output
             }
             $mockVNetXML = @'
